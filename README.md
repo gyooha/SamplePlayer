@@ -6,5 +6,6 @@
 
 ## 언어 및 라이브러리
 * Kotlin
+* Coroutine
 * Navigation Architecture Component
 * ExoPlayer(예정)
