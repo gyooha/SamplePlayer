@@ -1,4 +1,4 @@
-package io.seroo.sampleplayer
+package io.seroo.sampleplayer.common
 
 import android.Manifest
 import android.content.Context
@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import io.seroo.sampleplayer.R
 
 object PermissionUtils {
     const val REQUEST_PERMISSION: Int = 0x100
@@ -23,10 +24,16 @@ object PermissionUtils {
         fragment.activity?.let {
             when {
                 checkPermission(it) -> onGrantedAction.invoke()
-                ActivityCompat.shouldShowRequestPermissionRationale(it, res) -> {
-                    showRequestPermissionRationaleDialog(fragment)
+                ActivityCompat.shouldShowRequestPermissionRationale(it,
+                    res
+                ) -> {
+                    showRequestPermissionRationaleDialog(
+                        fragment
+                    )
                 }
-                else -> ActivityCompat.requestPermissions(it, arrayOf(res), REQUEST_PERMISSION)
+                else -> ActivityCompat.requestPermissions(it, arrayOf(res),
+                    REQUEST_PERMISSION
+                )
             }
         }
     }
@@ -57,7 +64,11 @@ object PermissionUtils {
                             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                             Uri.parse("package:${context.packageName}")
                         ).also {
-                            SampleIntent.startActivityForResult(fragment, it, REQUEST_SETTINGS)
+                            SampleIntent.startActivityForResult(
+                                fragment,
+                                it,
+                                REQUEST_SETTINGS
+                            )
                         }
                     }
                 setCancelable(false)

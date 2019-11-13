@@ -1,4 +1,4 @@
-package io.seroo.sampleplayer
+package io.seroo.sampleplayer.home
 
 import androidx.lifecycle.ViewModel
 

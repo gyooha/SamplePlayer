@@ -1,8 +1,9 @@
 package io.seroo.sampleplayer.home
 
 data class AudioDTO(
-    val path: String,
-    val name: String,
-    val album: String,
-    val artist: String
+    val id: Long,
+    val artist: String,
+    val title: String,
+    val audioPath: String,
+    val albumPath: String
 )

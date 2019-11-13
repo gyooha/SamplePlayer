@@ -1,26 +1,24 @@
-package io.seroo.sampleplayer
+package io.seroo.sampleplayer.home
 
+import android.content.ContentUris
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.database.getStringOrNull
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
+import io.seroo.sampleplayer.common.PermissionUtils
 import io.seroo.sampleplayer.databinding.FragmentHomeBinding
-import io.seroo.sampleplayer.home.AudioDTO
 
 class HomeFragment : Fragment() {
-    private val projection: Array<String> = arrayOf(
-        MediaStore.Audio.Media._ID,
-        MediaStore.Audio.Media.ARTIST,
-        MediaStore.Audio.Media.TITLE,
-        MediaStore.Audio.Media.DISPLAY_NAME,
-        MediaStore.Audio.Media.DURATION
-    )
 
     private lateinit var fragmentHomeBinding: FragmentHomeBinding
+    private lateinit var sampleMediaAdapter: SampleMediaAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,6 +35,15 @@ class HomeFragment : Fragment() {
 
     private fun initAction() {
         val audioList = getAudioList()
+        context?.let {
+            sampleMediaAdapter = SampleMediaAdapter().apply {
+                submit(audioList)
+            }
+            fragmentHomeBinding.playerList.apply {
+                layoutManager = GridLayoutManager(it, 2)
+                adapter = sampleMediaAdapter
+            }
+        }
         Log.d("GYH", "audioList : $audioList")
     }
 
@@ -45,22 +52,34 @@ class HomeFragment : Fragment() {
 
         val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         context?.let { actualContext ->
-            val cursor = actualContext.contentResolver.query(
-                uri,
-                projection,
-                MediaStore.Audio.Media.IS_MUSIC + " != 0",
-                null,
-                null
-            )
+            val cursor = actualContext.contentResolver.query(uri, null, null, null, null)
 
-            cursor?.let { actualCursor ->
-                while (actualCursor.moveToNext()) {
-                    AudioDTO(
-                        actualCursor.getString(0),
-                        actualCursor.getString(1),
-                        actualCursor.getString(2),
-                        actualCursor.getString(3)
-                    ).also { audioList.add(it) }
+            when {
+                cursor == null -> {
+                    //TODO Query Fail
+                }
+                !cursor.moveToFirst() -> {
+                    //TODO no media error
+                }
+                else -> {
+                    val idIndex = cursor.getColumnIndex(MediaStore.Audio.Media._ID)
+                    val titleIndex = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)
+                    val artistIndex = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)
+                    val albumIdIndex = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
+
+                    do {
+                        val id = cursor.getLong(idIndex)
+                        val albumId = cursor.getLong(albumIdIndex)
+                        audioList.add(
+                            AudioDTO(
+                                id,
+                                cursor.getString(artistIndex),
+                                cursor.getString(titleIndex),
+                                ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id).toString(),
+                                ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId).toString()
+                            )
+                        )
+                    } while (cursor.moveToNext())
                 }
             }
 

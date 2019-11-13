@@ -1,8 +1,9 @@
-package io.seroo.sampleplayer
+package io.seroo.sampleplayer.common
 
 import android.app.Activity
 import android.content.Intent
 import androidx.fragment.app.Fragment
+import io.seroo.sampleplayer.BuildConfig
 
 object SampleIntent {
     fun startActivityForResult(activity: Activity, intent: Intent, requestCode: Int){

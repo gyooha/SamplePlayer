@@ -1,10 +1,17 @@
 package io.seroo.sampleplayer.home
 
-import android.view.View
-import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import io.seroo.sampleplayer.common.BaseViewHolder1
 import io.seroo.sampleplayer.databinding.SampleAudioViewHolderBinding
 
-class SampleAudioViewHolder(binding: SampleAudioViewHolderBinding): RecyclerView.ViewHolder(binding.root) {
+class SampleAudioViewHolder(
+    private val binding: SampleAudioViewHolderBinding
+) : BaseViewHolder1<AudioDTO>(binding.root) {
+    override fun bindView(item: AudioDTO, position: Int) {
+        Glide.with(itemView.context)
+               .load(item.albumPath)
+               .into(binding.albumThumbnail)
 
+        binding.title.text = item.title
+    }
 }

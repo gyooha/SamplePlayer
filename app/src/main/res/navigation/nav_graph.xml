@@ -5,6 +5,6 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="io.seroo.sampleplayer.HomeFragment"
+        android:name="io.seroo.sampleplayer.home.HomeFragment"
         android:label="HomeFragment" />
 </navigation>
