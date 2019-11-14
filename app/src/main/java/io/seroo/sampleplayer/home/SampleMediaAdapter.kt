@@ -7,7 +7,9 @@ import androidx.recyclerview.widget.RecyclerView
 import io.seroo.sampleplayer.common.BaseViewHolder
 import io.seroo.sampleplayer.databinding.SampleAudioViewHolderBinding
 
-class SampleMediaAdapter : RecyclerView.Adapter<BaseViewHolder>() {
+class SampleMediaAdapter(
+    private val homeActions: (HomeActions) -> Unit
+) : RecyclerView.Adapter<BaseViewHolder>() {
     private val sampleAudio: MutableList<AudioDTO> = mutableListOf()
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
@@ -22,7 +24,8 @@ class SampleMediaAdapter : RecyclerView.Adapter<BaseViewHolder>() {
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            )
+            ),
+            homeActions
         )
     }
 

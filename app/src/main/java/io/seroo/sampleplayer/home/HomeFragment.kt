@@ -9,9 +9,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.database.getStringOrNull
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import io.seroo.sampleplayer.R
 import io.seroo.sampleplayer.common.PermissionUtils
 import io.seroo.sampleplayer.databinding.FragmentHomeBinding
 
@@ -36,7 +38,9 @@ class HomeFragment : Fragment() {
     private fun initAction() {
         val audioList = getAudioList()
         context?.let {
-            sampleMediaAdapter = SampleMediaAdapter().apply {
+            sampleMediaAdapter = SampleMediaAdapter(
+                homeActions
+            ).apply {
                 submit(audioList)
             }
             fragmentHomeBinding.playerList.apply {
@@ -52,7 +56,13 @@ class HomeFragment : Fragment() {
 
         val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         context?.let { actualContext ->
-            val cursor = actualContext.contentResolver.query(uri, null, null, null, null)
+            val cursor = actualContext.contentResolver.query(
+                uri,
+                null,
+                MediaStore.Audio.Media.IS_MUSIC + "!= 0",
+                null,
+                null
+            )
 
             when {
                 cursor == null -> {
@@ -75,8 +85,14 @@ class HomeFragment : Fragment() {
                                 id,
                                 cursor.getString(artistIndex),
                                 cursor.getString(titleIndex),
-                                ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id).toString(),
-                                ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId).toString()
+                                ContentUris.withAppendedId(
+                                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                                    id
+                                ).toString(),
+                                ContentUris.withAppendedId(
+                                    Uri.parse("content://media/external/audio/albumart"),
+                                    albumId
+                                ).toString()
                             )
                         )
                     } while (cursor.moveToNext())
@@ -105,18 +121,29 @@ class HomeFragment : Fragment() {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-       if (PermissionUtils.REQUEST_PERMISSION == requestCode) {
-           PermissionUtils.onRequestPermissionResult(
-               grantResults,
-               onGrantedAction = { initAction() },
-               onDeniedPermission = {
-                   activity?.let {
-                       PermissionUtils.requestPermission(
-                           this@HomeFragment
-                       ) { initAction() }
-                   }
-               }
-           )
-       }
+        if (PermissionUtils.REQUEST_PERMISSION == requestCode) {
+            PermissionUtils.onRequestPermissionResult(
+                grantResults,
+                onGrantedAction = { initAction() },
+                onDeniedPermission = {
+                    activity?.let {
+                        PermissionUtils.requestPermission(
+                            this@HomeFragment
+                        ) { initAction() }
+                    }
+                }
+            )
+        }
+    }
+
+    private val homeActions: (HomeActions) -> Unit = { action ->
+        when (action) {
+            is HomeActions.MoveDetail -> {
+                findNavController().navigate(
+                    R.id.action_homeFragment_to_detailFragment,
+                    bundleOf("audioDTO" to action.audioDTO)
+                )
+            }
+        }
     }
 }

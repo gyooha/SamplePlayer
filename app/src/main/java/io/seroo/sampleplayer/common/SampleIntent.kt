@@ -21,4 +21,12 @@ object SampleIntent {
             if (BuildConfig.DEBUG) e.printStackTrace()
         }
     }
+
+    fun startActivity(fragment: Fragment, intent: Intent){
+        try {
+            fragment.startActivity(intent)
+        } catch (e: IllegalStateException) {
+            if (BuildConfig.DEBUG) e.printStackTrace()
+        }
+    }
 }
