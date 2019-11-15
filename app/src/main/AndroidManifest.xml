@@ -19,6 +19,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".MediaBrowserService">
+            <intent-filter>
+                <action android:name="io.seroo.sampleplayer.MediaBrowserService" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

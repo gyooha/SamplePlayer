@@ -29,6 +29,8 @@ class DetailFragment: Fragment() {
                 Glide.with(actualContext)
                     .load(data.albumPath)
                     .into(fragmentDetailBinding.albumImage)
+
+                data.audioPath
             }
         }
     }
