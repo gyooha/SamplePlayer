@@ -6,4 +6,11 @@
     <string name="pause">pause</string>
     <string name="channel_name">BaseChannel</string>
     <string name="channel_id">channel_id</string>
+
+    <string name="label_stop">Stop</string>
+    <string name="label_pause">Pause</string>
+    <string name="label_play">Play</string>
+    <string name="label_play_pause">Play and pause toggle</string>
+    <string name="label_previous">Previous track</string>
+    <string name="label_next">Next track</string>
 </resources>
