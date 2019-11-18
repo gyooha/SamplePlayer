@@ -10,3 +10,8 @@
 * ExoPlayer
 * Coroutine(예정)
 * UnitTest(예정)
+
+## 참고
+* https://github.com/android/uamp
+* https://codelabs.developers.google.com/codelabs/exoplayer-intro/#2
+* https://github.com/android/enterprise-samples/tree/master/DeviceOwner
