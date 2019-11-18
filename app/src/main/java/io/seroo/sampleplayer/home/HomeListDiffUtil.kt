@@ -3,8 +3,8 @@ package io.seroo.sampleplayer.home
 import androidx.recyclerview.widget.DiffUtil
 
 class HomeListDiffUtil(
-    val newList: List<AudioDTO>,
-    val oldList: List<AudioDTO>
+    val newList: List<Audio>,
+    val oldList: List<Audio>
 ): DiffUtil.Callback() {
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
         newList[newItemPosition] == oldList[oldItemPosition]

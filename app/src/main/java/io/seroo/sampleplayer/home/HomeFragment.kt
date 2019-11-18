@@ -51,8 +51,8 @@ class HomeFragment : Fragment() {
         Log.d("GYH", "audioList : $audioList")
     }
 
-    private fun getAudioList(): List<AudioDTO> {
-        val audioList: MutableList<AudioDTO> = mutableListOf()
+    private fun getAudioList(): List<Audio> {
+        val audioList: MutableList<Audio> = mutableListOf()
 
         val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         context?.let { actualContext ->
@@ -81,7 +81,7 @@ class HomeFragment : Fragment() {
                         val id = cursor.getLong(idIndex)
                         val albumId = cursor.getLong(albumIdIndex)
                         audioList.add(
-                            AudioDTO(
+                            Audio(
                                 id,
                                 cursor.getString(artistIndex),
                                 cursor.getString(titleIndex),
@@ -141,7 +141,7 @@ class HomeFragment : Fragment() {
             is HomeActions.MoveDetail -> {
                 findNavController().navigate(
                     R.id.action_homeFragment_to_detailFragment,
-                    bundleOf("audioDTO" to action.audioDTO)
+                    bundleOf("Audio" to action.audio)
                 )
             }
         }

@@ -6,7 +6,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 @Keep
-data class AudioDTO(
+data class Audio(
     val id: Long,
     val artist: String,
     val title: String,

@@ -10,7 +10,7 @@ import io.seroo.sampleplayer.databinding.SampleAudioViewHolderBinding
 class SampleMediaAdapter(
     private val homeActions: (HomeActions) -> Unit
 ) : RecyclerView.Adapter<BaseViewHolder>() {
-    private val sampleAudio: MutableList<AudioDTO> = mutableListOf()
+    private val sampleAudio: MutableList<Audio> = mutableListOf()
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         when (holder) {
@@ -31,7 +31,7 @@ class SampleMediaAdapter(
 
     override fun getItemCount(): Int = sampleAudio.size
 
-    fun submit(newList: List<AudioDTO>) {
+    fun submit(newList: List<Audio>) {
         DiffUtil.calculateDiff(
             HomeListDiffUtil(newList = newList, oldList = sampleAudio)
         ).dispatchUpdatesTo(this)
