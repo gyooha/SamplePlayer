@@ -6,6 +6,7 @@
 
 ## 언어 및 라이브러리
 * Kotlin
-* Coroutine
 * Navigation Architecture Component
-* ExoPlayer(예정)
+* ExoPlayer
+* Coroutine(예정)
+* UnitTest(예정)
