@@ -16,8 +16,8 @@
         android:name="io.seroo.sampleplayer.detail.DetailFragment"
         android:label="DetailFragment" >
         <argument
-            android:name="audio"
-            app:argType="io.seroo.sampleplayer.home.Audio"
+            android:name="audioId"
+            app:argType="java.lang.String"
             />
     </fragment>
 </navigation>

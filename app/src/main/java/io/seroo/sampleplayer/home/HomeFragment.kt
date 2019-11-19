@@ -5,14 +5,16 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import io.seroo.sampleplayer.MainViewModel
 import io.seroo.sampleplayer.R
 import io.seroo.sampleplayer.common.PermissionUtils
 import io.seroo.sampleplayer.databinding.FragmentHomeBinding
@@ -21,6 +23,8 @@ class HomeFragment : Fragment() {
 
     private lateinit var fragmentHomeBinding: FragmentHomeBinding
     private lateinit var sampleMediaAdapter: SampleMediaAdapter
+
+    private val mainViewModel: MainViewModel by navGraphViewModels(R.id.nav_graph) { ViewModelProvider.NewInstanceFactory() }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,23 +36,25 @@ class HomeFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        fragmentHomeBinding.run {
+            lifecycleOwner = this@HomeFragment
+            vm = mainViewModel
+        }
         PermissionUtils.requestPermission(this@HomeFragment) { initAction() }
     }
 
     private fun initAction() {
-        val audioList = getAudioList()
+        mainViewModel.setMusicList(getAudioList())
         context?.let {
             sampleMediaAdapter = SampleMediaAdapter(
                 homeActions
-            ).apply {
-                submit(audioList)
-            }
+            )
+
             fragmentHomeBinding.playerList.apply {
                 layoutManager = GridLayoutManager(it, 2)
                 adapter = sampleMediaAdapter
             }
         }
-        Log.d("GYH", "audioList : $audioList")
     }
 
     private fun getAudioList(): List<Audio> {
@@ -141,7 +147,7 @@ class HomeFragment : Fragment() {
             is HomeActions.MoveDetail -> {
                 findNavController().navigate(
                     R.id.action_homeFragment_to_detailFragment,
-                    bundleOf("Audio" to action.audio)
+                    bundleOf(Audio.KEY_AUDIO_ID to action.audioId)
                 )
             }
         }

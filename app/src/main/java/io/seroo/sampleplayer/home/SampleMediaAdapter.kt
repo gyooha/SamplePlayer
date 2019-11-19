@@ -3,18 +3,16 @@ package io.seroo.sampleplayer.home
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
+import io.seroo.sampleplayer.common.BaseAdapter
 import io.seroo.sampleplayer.common.BaseViewHolder
 import io.seroo.sampleplayer.databinding.SampleAudioViewHolderBinding
 
 class SampleMediaAdapter(
     private val homeActions: (HomeActions) -> Unit
-) : RecyclerView.Adapter<BaseViewHolder>() {
-    private val sampleAudio: MutableList<Audio> = mutableListOf()
-
+) : BaseAdapter<Audio>() {
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         when (holder) {
-            is SampleAudioViewHolder -> holder.bindView(sampleAudio[position], position)
+            is SampleAudioViewHolder -> holder.bindView(getItem(position), position)
         }
     }
 
@@ -29,13 +27,11 @@ class SampleMediaAdapter(
         )
     }
 
-    override fun getItemCount(): Int = sampleAudio.size
-
-    fun submit(newList: List<Audio>) {
+    override fun submit(newList: List<Audio>) {
         DiffUtil.calculateDiff(
-            HomeListDiffUtil(newList = newList, oldList = sampleAudio)
+            HomeListDiffUtil(newList = newList, oldList = itemList)
         ).dispatchUpdatesTo(this)
-        sampleAudio.run {
+        itemList.run {
             clear()
             addAll(newList)
         }

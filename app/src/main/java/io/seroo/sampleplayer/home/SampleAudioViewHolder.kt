@@ -16,7 +16,7 @@ class SampleAudioViewHolder(
         binding.title.text = item.title
 
         itemView.setOnClickListener {
-            homeActions.invoke(HomeActions.MoveDetail(item))
+            homeActions.invoke(HomeActions.MoveDetail(item.id.toString()))
         }
     }
 }

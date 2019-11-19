@@ -8,11 +8,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.navGraphViewModels
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.source.ConcatenatingMediaSource
+import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import io.seroo.sampleplayer.MainViewModel
+import io.seroo.sampleplayer.R
 import io.seroo.sampleplayer.databinding.FragmentDetailBinding
 import io.seroo.sampleplayer.home.Audio
 import kotlinx.android.synthetic.main.fragment_detail.*
@@ -28,6 +35,9 @@ class DetailFragment : Fragment() {
 
     private lateinit var fragmentDetailBinding: FragmentDetailBinding
     private lateinit var sharedPreference: SharedPreferences
+    private val mainViewModel: MainViewModel by navGraphViewModels(R.id.nav_graph) {
+        ViewModelProvider.NewInstanceFactory()
+    }
     private var player: ExoPlayer? = null
 
     override fun onCreateView(
@@ -40,17 +50,16 @@ class DetailFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        fragmentDetailBinding.run {
+            lifecycleOwner = this@DetailFragment
+        }
 
         context?.let { actualContext ->
-            sharedPreference =
-                actualContext.getSharedPreferences(SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
-
-            arguments?.getParcelable<Audio>("Audio")?.let { data ->
-                with (fragmentDetailBinding) {
-                    songTitle.text = data.title
-                    songArtist.text = data.artist
-                }
-            }
+            sharedPreference = actualContext
+                .getSharedPreferences(
+                    SHARED_PREFERENCE_NAME,
+                    Context.MODE_PRIVATE
+                )
         }
     }
 
@@ -100,17 +109,34 @@ class DetailFragment : Fragment() {
 
     private fun initializePlayer() {
         context?.let { actualContext ->
-            arguments?.getParcelable<Audio>("Audio")?.let { data ->
+            arguments?.getString(Audio.KEY_AUDIO_ID)?.let { data ->
                 player = ExoPlayerFactory.newSimpleInstance(actualContext)
                 music_player?.player = player
-                val mediaSource = buildMediaSource(Uri.parse(data.audioPath))
 
-                sharedPreference.run {
-                    player?.run {
-                        playWhenReady = getBoolean(KEY_PLAY_WHEN_READY, true)
-                        seekTo(getInt(KEY_CURRENT_WINDOW, 0), getLong(KEY_PLAY_BACK_POSITION, 0L))
-                        prepare(mediaSource)
-                    }
+                mainViewModel.run {
+                    pairMusic.observe(
+                        this@DetailFragment,
+                        Observer {
+                            val (firstMusic, secondMusic) = it
+
+                            fragmentDetailBinding.songTitle.text = firstMusic.title
+                            fragmentDetailBinding.songArtist.text = firstMusic.artist
+
+                            val mediaSource = buildMediaSource(
+                                Uri.parse(firstMusic.audioPath),
+                                Uri.parse(secondMusic.audioPath)
+                            )
+
+                            sharedPreference.run {
+                                player?.run {
+                                    playWhenReady = getBoolean(KEY_PLAY_WHEN_READY, true)
+                                    seekTo(getInt(KEY_CURRENT_WINDOW, 0), getLong(KEY_PLAY_BACK_POSITION, 0L))
+                                    prepare(mediaSource)
+                                }
+                            }
+                        }
+                    )
+                    findTwoMusicsById(data)
                 }
             }
         }
@@ -127,8 +153,14 @@ class DetailFragment : Fragment() {
                     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
     }
 
-    private fun buildMediaSource(uri: Uri): ProgressiveMediaSource {
-        return ProgressiveMediaSource.Factory(DefaultDataSourceFactory(context, USER_AGENT))
-            .createMediaSource(uri)
+    private fun buildMediaSource(firstUri: Uri, secondUri: Uri): MediaSource {
+        val mediaSourceFactory = ProgressiveMediaSource.Factory(
+            DefaultDataSourceFactory(context, USER_AGENT)
+        )
+
+        return ConcatenatingMediaSource(
+            mediaSourceFactory.createMediaSource(firstUri),
+            mediaSourceFactory.createMediaSource(secondUri)
+        )
     }
 }
