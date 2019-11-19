@@ -6,6 +6,12 @@
 
 ## 언어 및 라이브러리
 * Kotlin
-* Coroutine
 * Navigation Architecture Component
-* ExoPlayer(예정)
+* ExoPlayer
+* Coroutine(예정)
+* UnitTest(예정)
+
+## 참고
+* https://github.com/android/uamp
+* https://codelabs.developers.google.com/codelabs/exoplayer-intro/#2
+* https://github.com/android/enterprise-samples/tree/master/DeviceOwner
