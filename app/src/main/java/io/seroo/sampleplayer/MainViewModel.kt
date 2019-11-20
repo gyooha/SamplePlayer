@@ -10,20 +10,23 @@ class MainViewModel : ViewModel() {
     private var musicListWithoutLiveData: List<Audio> = listOf()
     private val _musicList = MutableLiveData<List<Audio>>(listOf())
     val musicList: LiveData<List<Audio>> get() = _musicList
-    private val _pairMusic: MutableLiveData<Pair<Audio, Audio>> = MutableLiveData()
-    val pairMusic: LiveData<Pair<Audio, Audio>> get() = _pairMusic
+    private val _currentMusic: MutableLiveData<Audio> = MutableLiveData()
+    val currentMusic: LiveData<Audio> get() = _currentMusic
 
     fun setMusicList(musicList: List<Audio>) {
         musicListWithoutLiveData = musicList
         _musicList.value = musicList
     }
 
-    fun findTwoMusicsById(id: String) {
-        musicListWithoutLiveData
+    fun findTwoMusicsByIdOrRandom(id: String = "") {
+        val result = musicListWithoutLiveData
             .firstOrNull { it.id.toString() == id }
-            ?.run {
-                val randomInt = Random.nextInt(musicListWithoutLiveData.size)
-                _pairMusic.value = this to musicListWithoutLiveData[randomInt]
-            }
+
+        _currentMusic.value = if (result == null) {
+            val randomInt = Random.nextInt(musicListWithoutLiveData.size)
+            musicListWithoutLiveData[randomInt]
+        } else {
+            result
+        }
     }
 }

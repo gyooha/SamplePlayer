@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.navGraphViewModels
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -102,7 +103,7 @@ class DetailFragment : Fragment() {
                 putLong(KEY_PLAY_BACK_POSITION, currentPosition)
                 apply()
             }
-
+            removeListener(playStateListener)
             release()
         }.also { player = null }
     }
@@ -111,20 +112,20 @@ class DetailFragment : Fragment() {
         context?.let { actualContext ->
             arguments?.getString(Audio.KEY_AUDIO_ID)?.let { data ->
                 player = ExoPlayerFactory.newSimpleInstance(actualContext)
+                player?.addListener(playStateListener)
                 music_player?.player = player
 
                 mainViewModel.run {
-                    pairMusic.observe(
+                    currentMusic.observe(
                         this@DetailFragment,
                         Observer {
-                            val (firstMusic, secondMusic) = it
+                            val currentMusic = it
 
-                            fragmentDetailBinding.songTitle.text = firstMusic.title
-                            fragmentDetailBinding.songArtist.text = firstMusic.artist
+                            fragmentDetailBinding.songTitle.text = currentMusic.title
+                            fragmentDetailBinding.songArtist.text = currentMusic.artist
 
                             val mediaSource = buildMediaSource(
-                                Uri.parse(firstMusic.audioPath),
-                                Uri.parse(secondMusic.audioPath)
+                                Uri.parse(currentMusic.audioPath)
                             )
 
                             sharedPreference.run {
@@ -136,7 +137,7 @@ class DetailFragment : Fragment() {
                             }
                         }
                     )
-                    findTwoMusicsById(data)
+                    findTwoMusicsByIdOrRandom(data)
                 }
             }
         }
@@ -153,14 +154,22 @@ class DetailFragment : Fragment() {
                     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
     }
 
-    private fun buildMediaSource(firstUri: Uri, secondUri: Uri): MediaSource {
+    private fun buildMediaSource(currentMusic: Uri): MediaSource {
         val mediaSourceFactory = ProgressiveMediaSource.Factory(
             DefaultDataSourceFactory(context, USER_AGENT)
         )
 
-        return ConcatenatingMediaSource(
-            mediaSourceFactory.createMediaSource(firstUri),
-            mediaSourceFactory.createMediaSource(secondUri)
-        )
+        return mediaSourceFactory.createMediaSource(currentMusic)
     }
+
+    private val playStateListener = object: Player.EventListener {
+        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+            when (playbackState) {
+                Player.STATE_ENDED -> {
+
+                }
+            }
+        }
+    }
+
 }
