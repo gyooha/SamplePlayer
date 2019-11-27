@@ -6,21 +6,21 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/song_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_marginTop="26dp"
-            app:layout_constraintVertical_bias="0"
-            app:layout_constraintVertical_chainStyle="packed"
+            android:gravity="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintBottom_toTopOf="@+id/song_artist"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintVertical_chainStyle="packed"
             tools:text="Song Title" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -30,32 +30,61 @@
             android:gravity="center"
             android:paddingBottom="12dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintBottom_toTopOf="@+id/music_player"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/song_title"
-            app:layout_constraintBottom_toTopOf="@+id/music_player"
             tools:text="Song Artist" />
 
         <com.google.android.exoplayer2.ui.PlayerView
             android:id="@+id/music_player"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:use_controller="false"
-            app:layout_constraintTop_toBottomOf="@+id/song_artist"
-            app:layout_constraintBottom_toTopOf="@+id/music_controller_group"
+            app:layout_constraintBottom_toTopOf="@+id/b_continuous_top"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/song_artist"
+            app:use_controller="false" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/music_controller_group"
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/b_continuous_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="top"
+            app:constraint_referenced_ids="tv_music_continuous,music_continuous" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_music_continuous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/b_continuous_bottom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/music_continuous"
+            app:layout_constraintTop_toBottomOf="@+id/b_continuous_top"
+            tools:text="4:55" />
+
+        <ProgressBar
+            android:id="@+id/music_continuous"
+            style="@android:style/Widget.Material.ProgressBar.Horizontal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/music_player"
+            app:layout_constraintBottom_toTopOf="@+id/b_continuous_bottom"
+            app:layout_constraintEnd_toStartOf="@+id/tv_music_continuous"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/b_continuous_top" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/b_continuous_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="music_continuous,tv_music_continuous" />
+
+        <include
+            android:id="@+id/controller_group"
+            layout="@layout/sample_audio_controller" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

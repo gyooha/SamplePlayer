@@ -11,10 +11,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.navGraphViewModels
-import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
@@ -22,10 +22,11 @@ import com.google.android.exoplayer2.util.Util
 import io.seroo.sampleplayer.MainViewModel
 import io.seroo.sampleplayer.R
 import io.seroo.sampleplayer.databinding.FragmentDetailBinding
-import io.seroo.sampleplayer.home.Audio
+import io.seroo.sampleplayer.db.Audio
 import kotlinx.android.synthetic.main.fragment_detail.*
+import kotlinx.android.synthetic.main.sample_audio_controller.view.*
 
-class DetailFragment : Fragment() {
+class PlayerDetailFragment : Fragment() {
     companion object {
         private const val USER_AGENT = "music_player"
         private const val SHARED_PREFERENCE_NAME = "musci_player_store"
@@ -39,7 +40,7 @@ class DetailFragment : Fragment() {
     private val mainViewModel: MainViewModel by navGraphViewModels(R.id.nav_graph) {
         ViewModelProvider.NewInstanceFactory()
     }
-    private var player: ExoPlayer? = null
+    private var player: SimpleExoPlayer? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,7 +53,7 @@ class DetailFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         fragmentDetailBinding.run {
-            lifecycleOwner = this@DetailFragment
+            lifecycleOwner = this@PlayerDetailFragment
         }
 
         context?.let { actualContext ->
@@ -113,11 +114,12 @@ class DetailFragment : Fragment() {
             arguments?.getString(Audio.KEY_AUDIO_ID)?.let { data ->
                 player = ExoPlayerFactory.newSimpleInstance(actualContext)
                 player?.addListener(playStateListener)
+                player?.addAnalyticsListener()
                 music_player?.player = player
 
                 mainViewModel.run {
                     currentMusic.observe(
-                        this@DetailFragment,
+                        this@PlayerDetailFragment,
                         Observer {
                             val currentMusic = it
 
@@ -137,7 +139,7 @@ class DetailFragment : Fragment() {
                             }
                         }
                     )
-                    findTwoMusicsByIdOrRandom(data)
+                    findMusicById(data)
                 }
             }
         }
@@ -162,7 +164,21 @@ class DetailFragment : Fragment() {
         return mediaSourceFactory.createMediaSource(currentMusic)
     }
 
+    private fun startMusic() {
+        player?.let { exoPlayer ->
+            findRandomMusic()
+        }
+    }
+
     private val playStateListener = object: Player.EventListener {
+
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            fragmentDetailBinding
+                .controllerGroup
+                .btn_play_or_pause
+                ?.isActivated = isPlaying
+        }
+
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
             when (playbackState) {
                 Player.STATE_ENDED -> {
@@ -172,4 +188,7 @@ class DetailFragment : Fragment() {
         }
     }
 
+    private val analyticsListener = object: AnalyticsListener {
+
+    }
 }

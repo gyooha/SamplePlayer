@@ -3,7 +3,7 @@ package io.seroo.sampleplayer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.seroo.sampleplayer.home.Audio
+import io.seroo.sampleplayer.db.Audio
 import kotlin.random.Random
 
 class MainViewModel : ViewModel() {
@@ -18,15 +18,13 @@ class MainViewModel : ViewModel() {
         _musicList.value = musicList
     }
 
-    fun findTwoMusicsByIdOrRandom(id: String = "") {
-        val result = musicListWithoutLiveData
-            .firstOrNull { it.id.toString() == id }
+    fun findRandomMusic() {
+        val randomInt = Random.nextInt(musicListWithoutLiveData.size)
+        _currentMusic.value = musicListWithoutLiveData[randomInt]
+    }
 
-        _currentMusic.value = if (result == null) {
-            val randomInt = Random.nextInt(musicListWithoutLiveData.size)
-            musicListWithoutLiveData[randomInt]
-        } else {
-            result
-        }
+    fun findMusicById(id: String) {
+        _currentMusic.value = musicListWithoutLiveData
+            .firstOrNull { it.id.toString() == id }
     }
 }

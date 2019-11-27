@@ -1,5 +1,8 @@
-package io.seroo.sampleplayer.home
+package io.seroo.sampleplayer.db
 
+import androidx.room.Entity
+
+@Entity(tableName = "audio")
 data class Audio(
     val id: Long,
     val artist: String,

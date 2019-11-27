@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import io.seroo.sampleplayer.common.BaseAdapter
 import io.seroo.sampleplayer.common.BaseViewHolder
 import io.seroo.sampleplayer.databinding.SampleAudioViewHolderBinding
+import io.seroo.sampleplayer.db.Audio
 
 class SampleMediaAdapter(
     private val homeActions: (HomeActions) -> Unit

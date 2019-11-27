@@ -3,6 +3,7 @@ package io.seroo.sampleplayer.home
 import com.bumptech.glide.Glide
 import io.seroo.sampleplayer.common.BaseViewHolder1
 import io.seroo.sampleplayer.databinding.SampleAudioViewHolderBinding
+import io.seroo.sampleplayer.db.Audio
 
 class SampleAudioViewHolder(
     private val binding: SampleAudioViewHolderBinding,

@@ -13,7 +13,7 @@
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
-        android:name="io.seroo.sampleplayer.detail.DetailFragment"
+        android:name="io.seroo.sampleplayer.detail.PlayerDetailFragment"
         android:label="DetailFragment" >
         <argument
             android:name="audioId"
